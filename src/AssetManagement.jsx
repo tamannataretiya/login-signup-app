@@ -55,6 +55,19 @@ function AssetManagement() {
     );
   };
 
+  const exportToCSV = () => {
+    let csv = "Asset Name,Type,Assigned Employee\n";
+    assets.forEach((a) => {
+      csv += `${a.assetName},${a.assetType},${a.assignedEmployee}\n`;
+    });
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "asset_report.csv";
+    link.click();
+  };
+
   return (
     <div style={{ padding: "30px", backgroundColor: "#f4f6f9", minHeight: "100vh" }}>
       <h1 style={{ textAlign: "center", color: "#2563eb" }}>Asset Management System</h1>
@@ -106,6 +119,20 @@ function AssetManagement() {
 
       <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "10px", marginTop: "20px" }}>
         <h3>Assigned Assets</h3>
+        <button
+          onClick={exportToCSV}
+          style={{
+            backgroundColor: "#16a34a",
+            color: "white",
+            border: "none",
+            padding: "6px 12px",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginBottom: "10px",
+          }}
+        >
+          Export to CSV
+        </button>
         {assets.length === 0 ? (
           <p>No assets assigned yet.</p>
         ) : (
