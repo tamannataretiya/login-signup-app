@@ -5,6 +5,7 @@ function AssetManagement() {
   const [assetType, setAssetType] = useState("");
   const [assignedEmployee, setAssignedEmployee] = useState("");
   const [assets, setAssets] = useState([]);
+  const [returnedAssets, setReturnedAssets] = useState([]);
 
   const handleAssign = () => {
     if (!assetName || !assetType || !assignedEmployee) {
@@ -15,6 +16,12 @@ function AssetManagement() {
     setAssetName("");
     setAssetType("");
     setAssignedEmployee("");
+  };
+
+  const handleReturn = (index) => {
+    const returned = assets[index];
+    setReturnedAssets([...returnedAssets, returned]);
+    setAssets(assets.filter((_, i) => i !== index));
   };
 
   return (
@@ -77,10 +84,52 @@ function AssetManagement() {
                 <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Asset Name</th>
                 <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Type</th>
                 <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Assigned To</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Action</th>
               </tr>
             </thead>
             <tbody>
               {assets.map((a, i) => (
+                <tr key={i}>
+                  <td style={{ padding: "8px" }}>{a.assetName}</td>
+                  <td style={{ padding: "8px" }}>{a.assetType}</td>
+                  <td style={{ padding: "8px" }}>{a.assignedEmployee}</td>
+                  <td style={{ padding: "8px" }}>
+                    <button
+                      onClick={() => handleReturn(i)}
+                      style={{
+                        backgroundColor: "#ef4444",
+                        color: "white",
+                        border: "none",
+                        padding: "6px 12px",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Return
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "10px", marginTop: "20px" }}>
+        <h3>Returned Assets</h3>
+        {returnedAssets.length === 0 ? (
+          <p>No assets returned yet.</p>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Asset Name</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Type</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Previously Assigned To</th>
+              </tr>
+            </thead>
+            <tbody>
+              {returnedAssets.map((a, i) => (
                 <tr key={i}>
                   <td style={{ padding: "8px" }}>{a.assetName}</td>
                   <td style={{ padding: "8px" }}>{a.assetType}</td>
