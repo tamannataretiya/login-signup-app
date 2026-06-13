@@ -1,7 +1,7 @@
-import Dashboard from "./pages/Dashboard";
+import AssetManagement from "./AssetManagement";
 
 function App() {
-  return <Dashboard />;
+  return <AssetManagement />;
 }
 
 export default App;
