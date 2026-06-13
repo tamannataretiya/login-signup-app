@@ -7,9 +7,22 @@ function AssetManagement() {
   const [assets, setAssets] = useState([]);
   const [returnedAssets, setReturnedAssets] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [auditTrail, setAuditTrail] = useState([]);
 
   const addNotification = (message) => {
     setNotifications([{ message, time: new Date().toLocaleTimeString() }, ...notifications]);
+  };
+
+  const addAudit = (action, oldValue, newValue) => {
+    setAuditTrail([
+      {
+        action,
+        oldValue: oldValue || "-",
+        newValue: newValue || "-",
+        time: new Date().toLocaleString(),
+      },
+      ...auditTrail,
+    ]);
   };
 
   const handleAssign = () => {
@@ -17,8 +30,14 @@ function AssetManagement() {
       alert("Please fill all fields");
       return;
     }
-    setAssets([...assets, { assetName, assetType, assignedEmployee }]);
+    const newAsset = { assetName, assetType, assignedEmployee };
+    setAssets([...assets, newAsset]);
     addNotification(`${assetType} "${assetName}" assigned to ${assignedEmployee}`);
+    addAudit(
+      "Asset Assigned",
+      "Unassigned",
+      `${assetType} "${assetName}" -> ${assignedEmployee}`
+    );
     setAssetName("");
     setAssetType("");
     setAssignedEmployee("");
@@ -29,6 +48,11 @@ function AssetManagement() {
     setReturnedAssets([...returnedAssets, returned]);
     setAssets(assets.filter((_, i) => i !== index));
     addNotification(`${returned.assetType} "${returned.assetName}" returned by ${returned.assignedEmployee}`);
+    addAudit(
+      "Asset Returned",
+      `${returned.assetType} "${returned.assetName}" assigned to ${returned.assignedEmployee}`,
+      "Returned / Unassigned"
+    );
   };
 
   return (
@@ -160,6 +184,34 @@ function AssetManagement() {
               </li>
             ))}
           </ul>
+        )}
+      </div>
+
+      <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "10px", marginTop: "20px" }}>
+        <h3>Audit Trail</h3>
+        {auditTrail.length === 0 ? (
+          <p>No audit records yet.</p>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Action</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Old Value</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>New Value</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {auditTrail.map((entry, i) => (
+                <tr key={i}>
+                  <td style={{ padding: "8px" }}>{entry.action}</td>
+                  <td style={{ padding: "8px" }}>{entry.oldValue}</td>
+                  <td style={{ padding: "8px" }}>{entry.newValue}</td>
+                  <td style={{ padding: "8px", fontSize: "12px", color: "#888" }}>{entry.time}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>
