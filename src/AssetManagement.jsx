@@ -6,6 +6,11 @@ function AssetManagement() {
   const [assignedEmployee, setAssignedEmployee] = useState("");
   const [assets, setAssets] = useState([]);
   const [returnedAssets, setReturnedAssets] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+
+  const addNotification = (message) => {
+    setNotifications([{ message, time: new Date().toLocaleTimeString() }, ...notifications]);
+  };
 
   const handleAssign = () => {
     if (!assetName || !assetType || !assignedEmployee) {
@@ -13,6 +18,7 @@ function AssetManagement() {
       return;
     }
     setAssets([...assets, { assetName, assetType, assignedEmployee }]);
+    addNotification(`${assetType} "${assetName}" assigned to ${assignedEmployee}`);
     setAssetName("");
     setAssetType("");
     setAssignedEmployee("");
@@ -22,6 +28,7 @@ function AssetManagement() {
     const returned = assets[index];
     setReturnedAssets([...returnedAssets, returned]);
     setAssets(assets.filter((_, i) => i !== index));
+    addNotification(`${returned.assetType} "${returned.assetName}" returned by ${returned.assignedEmployee}`);
   };
 
   return (
@@ -138,6 +145,21 @@ function AssetManagement() {
               ))}
             </tbody>
           </table>
+        )}
+      </div>
+
+      <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "10px", marginTop: "20px" }}>
+        <h3>Notifications</h3>
+        {notifications.length === 0 ? (
+          <p>No notifications yet.</p>
+        ) : (
+          <ul style={{ paddingLeft: "20px" }}>
+            {notifications.map((n, i) => (
+              <li key={i} style={{ marginBottom: "8px" }}>
+                {n.message} <span style={{ color: "#888", fontSize: "12px" }}>({n.time})</span>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>
